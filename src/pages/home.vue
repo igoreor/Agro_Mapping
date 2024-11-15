@@ -8,10 +8,9 @@
 </template>
 
 <script>
-import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
+import MainNav from '@/components/MainNav.vue';
 import SobreSection from '@/components/SobreSection.vue';
-
 
 export default {
     components: {
@@ -19,7 +18,16 @@ export default {
         MainHeader,
         SobreSection,
     },
+    created() {
+        this.verificarToken();
+    },
     methods: {
+        verificarToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                this.$router.push('/login');
+            }
+        },
         goToVendas() {
             this.$router.push('/vendas');
         },
@@ -28,5 +36,5 @@ export default {
 </script>
 
 <style>
-/* Estilos específicos para Home se necessário */
+/* Adicione estilos aqui, se necessário */
 </style>

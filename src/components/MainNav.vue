@@ -20,8 +20,8 @@
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
-          <li @click="scrollToSobre">Sobre</li>
-          <li>Contato</li>
+          <li @click="scrollToSobre"><router-link>Sobre </router-link></li>
+          <li @click="scrollToSobre"><router-link>contato </router-link></li>
         </ul>
       </nav>
       <div class="nav-icons-container">
@@ -68,12 +68,16 @@ export default {
 <style scoped>
 /* Navbar Principal */
 .navbar {
+  width: 100%;
+  height: 90px; /* Altura reduzida */
   background-color: #2c2c2c;
-  padding: 0.5rem 1 rem;
-  position: sticky;
+  position: relative;
   top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 99;
+  z-index: 9999;
 }
 
 /* Conteúdo da Navbar */
@@ -83,24 +87,29 @@ export default {
   justify-content: space-between;
   width: 100%;
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
+  padding: 0 5  px; /* Espaçamento horizontal */
 }
 
 /* Logo */
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 5px;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 18px; /* Fonte ajustada */
   font-weight: bold;
   color: #fff;
 }
 
 .logo span {
-  color: #00b33c; /* Cor de destaque */
+  color: #00b33c;
+}
+.logo-image {
+  height: 100px; /* Reduzindo o tamanho da imagem */
+  width: auto; /* Mantendo proporção */
 }
 
 /* Barra de Busca */
@@ -109,16 +118,15 @@ export default {
   align-items: center;
   background-color: #f5f5f5;
   border-radius: 20px;
-  padding: 3px 100px;
-  margin-left: 10px;
+  padding: 5px 40px;
 }
 
 .input-buscar input {
   border: none;
   outline: none;
   background: transparent;
-  padding: 5px;
   font-size: 14px;
+  color: #333;
 }
 
 .lupa-buscar,
@@ -138,7 +146,7 @@ export default {
 nav ul {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 50px; /* Espaçamento harmonioso */
   list-style: none;
   margin: 0;
   padding: 0;
@@ -151,7 +159,7 @@ nav ul li {
 nav ul li a {
   text-decoration: none;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   transition: color 0.3s;
 }
 
@@ -163,7 +171,7 @@ nav ul li a:hover {
 .nav-icons-container {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .clickable-image {
@@ -173,7 +181,7 @@ nav ul li a:hover {
 }
 
 .menu-button {
-  width: 20px;
+  width: 24px;
   cursor: pointer;
 }
 
@@ -186,10 +194,11 @@ nav ul li a:hover {
   .header-inner-content {
     flex-direction: column;
     align-items: center;
+    padding: 10px;
   }
   nav ul {
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     margin-top: 10px;
   }
   .buscar-box {

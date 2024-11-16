@@ -31,7 +31,7 @@ export default {
     methods: {
         async fazerLogin() {
             try {
-                const resposta = await axios.post('http://localhost:8080/api/login', {
+                const resposta = await axios.post('http://localhost:8090/api/login', {
                     email: this.email,
                     senha: this.senha,
                 });
@@ -50,37 +50,85 @@ export default {
 <style scoped>
 .login-container {
     max-width: 400px;
-    margin: auto;
+    margin: 50px auto; /* Espaçamento vertical */
     padding: 20px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
+    background-color: #f9f9f9; /* Fundo leve para destacar */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
 }
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
 .input-group {
     margin-bottom: 15px;
 }
+
 label {
     display: block;
     margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+    font-weight: bold;
 }
+
 input {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
+
+input:focus {
+    border-color: #42b983;
+    outline: none;
+    box-shadow: 0 0 5px rgba(66, 185, 131, 0.5);
+}
+
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
     background-color: #42b983;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 button:hover {
     background-color: #369b75;
 }
+
 .erro {
     color: red;
+    font-size: 14px;
     margin-top: 10px;
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+a {
+    color: #42b983;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 </style>

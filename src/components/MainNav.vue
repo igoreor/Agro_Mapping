@@ -20,6 +20,7 @@
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
+          <li><router-link to="/feiras">Feiras</router-link></li>
           <li @click="scrollToSobre"><router-link>Sobre </router-link></li>
           <li @click="scrollToSobre"><router-link>contato </router-link></li>
         </ul>
@@ -49,10 +50,18 @@ export default {
       this.searchQuery = '';
     },
     performSearch() {
-      if (this.searchQuery.trim()) {
-        this.$router.push({ path: '/pesquisa', query: { q: this.searchQuery } });
-      }
-    },
+  const trimmedQuery = this.searchQuery.trim();
+  if (trimmedQuery) {
+      this.$router.push({
+      name: 'search-results',
+      query: { q: trimmedQuery },
+      });
+      console.log(trimmedQuery);
+
+    } else {
+      alert('Por favor, insira um termo de busca válido.');
+    }
+  },
     logout() {
       document.cookie = 'token=; Max-Age=-99999999;';
       document.cookie = 'userLogado=; Max-Age=-99999999;';

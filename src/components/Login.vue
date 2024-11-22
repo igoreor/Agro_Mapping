@@ -1,134 +1,159 @@
 <template>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form @submit.prevent="fazerLogin">
-            <div class="input-group">
-                <label for="email">Email:</label>
-                <input type="email" v-model="email" id="email" required />
-            </div>
-            <div class="input-group">
-                <label for="senha">Senha:</label>
-                <input type="password" v-model="senha" id="senha" required />
-            </div>
-            <button type="submit">Entrar</button>
-            <p v-if="erro" class="erro">{{ erro }}</p>
-        </form>
-        <p>Não tem uma conta? <router-link to="/registro">Registre-se</router-link></p>
-    </div>
+  <div class="login-container">
+      <h2>Login</h2>
+      <form @submit.prevent="fazerLogin">
+          <div class="input-group">
+              <label for="email">Email:</label>
+              <input type="email" v-model="email" id="email" required />
+          </div>
+          <div class="input-group">
+              <label for="senha">Senha:</label>
+              <input type="password" v-model="senha" id="senha" required />
+          </div>
+          <button type="submit">Entrar</button>
+          <p v-if="erro" class="erro">{{ erro }}</p>
+      </form>
+      <p>Não tem uma conta? <router-link to="/registro">Registre-se</router-link></p>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
-    data() {
-        return {
-            email: '',
-            senha: '',
-            erro: null,
-        };
-    },
-    methods: {
-        async fazerLogin() {
-            try {
-                const resposta = await axios.post('http://localhost:8090/api/login', {
-                    email: this.email,
-                    senha: this.senha,
-                });
+  data() {
+      return {
+          email: '',
+          senha: '',
+          erro: null,
+      };
+  },
+  methods: {
+      async fazerLogin() {
+          try {
+              const resposta = await axios.post('http://localhost:8090/api/login', {
+                  email: this.email,
+                  senha: this.senha,
+              });
 
-                const token = resposta.data.token;
-                localStorage.setItem('token', token); // Armazena o token no localStorage
-                this.$router.push('/'); // Redireciona para a página Home
-            } catch (erro) {
-                this.erro = 'Email ou senha incorretos.'; // Exibe uma mensagem de erro
-            }
-        },
-    },
+              const token = resposta.data.token;
+              localStorage.setItem('token', token); // Armazena o token no localStorage
+
+              // Extrai a role diretamente do token
+              const role = this.extractRoleFromToken(token);
+              localStorage.setItem('role', role); // Armazena a role no localStorage
+
+              // Exibe a role como alert para verificação (pode remover depois)
+              alert('Role do usuário: ' + role);
+
+              this.$router.push('/'); // Redireciona para a página Home
+          } catch (erro) {
+              this.erro = 'Email ou senha incorretos.'; // Exibe uma mensagem de erro
+          }
+      },
+
+      // Função para extrair a role do token JWT
+      extractRoleFromToken(token) {
+          const base64Url = token.split('.')[1]; // Pega a parte do meio do token
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Converte para formato base64
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+
+          const decoded = JSON.parse(jsonPayload); // Decodifica o payload para objeto JSON
+          return decoded.role; // Retorna a role do payload
+      },
+  },
 };
 </script>
 
 <style scoped>
+/* Seu estilo aqui... */
+</style>
+
+
+<style scoped>
 .login-container {
-    max-width: 400px;
-    margin: 50px auto; /* Espaçamento vertical */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9; /* Fundo leve para destacar */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+  max-width: 400px;
+  margin: 50px auto; /* Espaçamento vertical */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9; /* Fundo leve para destacar */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
 }
 
 h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-    font-family: 'Arial', sans-serif;
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
 }
 
 .input-group {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #555;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+  font-weight: bold;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
 input:focus {
-    border-color: #42b983;
-    outline: none;
-    box-shadow: 0 0 5px rgba(66, 185, 131, 0.5);
+  border-color: #42b983;
+  outline: none;
+  box-shadow: 0 0 5px rgba(66, 185, 131, 0.5);
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #42b983;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #42b983;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #369b75;
+  background-color: #369b75;
 }
 
 .erro {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 
 p {
-    text-align: center;
-    font-size: 14px;
-    color: #666;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
 }
 
 a {
-    color: #42b983;
-    text-decoration: none;
+  color: #42b983;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-</style>
+</style> 

@@ -6,23 +6,16 @@
         <h1 class="logo">AGRO <span>Mapping</span></h1>
       </div>
       <form @submit.prevent="performSearch" class="buscar-box">
-        <div class="lupa-buscar" @click="performSearch">
-          <i class="bi bi-search"></i>
-        </div>
-        <div class="input-buscar">
-          <input type="text" v-model="searchQuery" placeholder="Faça uma busca" />
-        </div>
-        <div class="btn-fechar" @click="clearSearch">
-          <i class="bi bi-x-circle"></i>
-        </div>
+        <button class="buscar-button" @click="performSearch">
+          <i class="bi bi-search"></i> Buscar
+        </button>
       </form>
       <nav>
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
-          <li><router-link to="/feiras">Feiras</router-link></li>
-          <li @click="scrollToSobre"><router-link>Sobre </router-link></li>
-          <li @click="scrollToSobre"><router-link>contato </router-link></li>
+          <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
+          <li @click="scrollToSobre"><router-link>Contato</router-link></li>
         </ul>
       </nav>
       <div class="nav-icons-container">
@@ -38,7 +31,7 @@
 export default {
   data() {
     return {
-      searchQuery: '',
+      searchQuery: '', // Mantido para usar valores padrão, se necessário.
       isMenuOpen: false,
     };
   },
@@ -46,22 +39,14 @@ export default {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
-    clearSearch() {
-      this.searchQuery = '';
-    },
     performSearch() {
-  const trimmedQuery = this.searchQuery.trim();
-  if (trimmedQuery) {
+      const defaultQuery = 'produtos'; // Valor padrão para pesquisa.
       this.$router.push({
-      name: 'search-results',
-      query: { q: trimmedQuery },
+        name: 'search-results',
+        query: { q: defaultQuery },
       });
-      console.log(trimmedQuery);
-
-    } else {
-      alert('Por favor, insira um termo de busca válido.');
-    }
-  },
+      console.log('Pesquisa iniciada com termo padrão:', defaultQuery);
+    },
     logout() {
       document.cookie = 'token=; Max-Age=-99999999;';
       document.cookie = 'userLogado=; Max-Age=-99999999;';
@@ -78,7 +63,7 @@ export default {
 /* Navbar Principal */
 .navbar {
   width: 100%;
-  height: 90px; /* Altura reduzida */
+  height: 90px;
   background-color: #2c2c2c;
   position: relative;
   top: 0;
@@ -97,7 +82,6 @@ export default {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 5  px; /* Espaçamento horizontal */
 }
 
 /* Logo */
@@ -108,7 +92,7 @@ export default {
 }
 
 .logo {
-  font-size: 18px; /* Fonte ajustada */
+  font-size: 18px;
   font-weight: bold;
   color: #fff;
 }
@@ -116,46 +100,41 @@ export default {
 .logo span {
   color: #00b33c;
 }
+
 .logo-image {
-  height: 100px; /* Reduzindo o tamanho da imagem */
-  width: auto; /* Mantendo proporção */
+  height: 100px;
+  width: auto;
 }
 
 /* Barra de Busca */
 .buscar-box {
   display: flex;
   align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 20px;
-  padding: 5px 40px;
 }
 
-.input-buscar input {
+.buscar-button {
+  background-color: #00b33c;
+  color: white;
   border: none;
-  outline: none;
-  background: transparent;
+  border-radius: 20px;
+  padding: 10px 20px;
   font-size: 14px;
-  color: #333;
-}
-
-.lupa-buscar,
-.btn-fechar {
   cursor: pointer;
-  color: #555;
-  font-size: 18px;
-  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s;
 }
 
-.lupa-buscar:hover,
-.btn-fechar:hover {
-  color: #00b33c;
+.buscar-button:hover {
+  background-color: #007e2b;
 }
 
 /* Navegação */
 nav ul {
   display: flex;
   align-items: center;
-  gap: 50px; /* Espaçamento harmonioso */
+  gap: 50px;
   list-style: none;
   margin: 0;
   padding: 0;

@@ -26,7 +26,6 @@
           <div class="nav-icons-container">
             <div class="image-container">
               <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="logout" />
-              <span class="hover-text">Sair</span>
             </div>
             <img src="@/layouts/menu.png" class="menu-button" />
           </div>
@@ -96,9 +95,6 @@
         this.query = "";
         this.resultados = [];
         this.erro = "";
-      },
-      logout() {
-        this.$router.push("/login");
       },
     },
     filters: {
@@ -214,22 +210,28 @@
   }
 
   nav ul {
-      display: flex;
-      list-style: none;
-      align-items: center;
-  }
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
-  nav ul li {
-      color: white;
-      margin-right: 1.5rem;
-      cursor: pointer;
-  }
+nav ul li {
+  cursor: pointer;
+}
 
-  nav ul li:hover {
-      transform: translateY(-5px);
-      transition: all 0.2s;
-      font-weight: bold;
-  }
+nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #00b33c;
+}
 
   .nav-icons-container {
       display: flex;

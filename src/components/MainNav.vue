@@ -45,11 +45,6 @@ export default {
       this.$router.push('/search');
       console.log('Pesquisa iniciada com termo padrão:', defaultQuery);
     },
-    logout() {
-      document.cookie = 'token=; Max-Age=-99999999;';
-      document.cookie = 'userLogado=; Max-Age=-99999999;';
-      this.$router.push('/login');
-    },
     scrollToSobre() {
       document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' });
     },

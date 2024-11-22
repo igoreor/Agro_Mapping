@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import home from "../pages/home.vue";
 import Login from "../pages/login.vue";
 import Registro from "../pages/registro.vue";
+import Feiras from "@/pages/Feiras.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path:"/cadastrocontato",
       name: "CadastroContato",
       component: CadastroContato,
+    },
+    {
+      path: "/feiras",
+      name: "Feiras",
+      component: Feiras,
     }
   ],
 });

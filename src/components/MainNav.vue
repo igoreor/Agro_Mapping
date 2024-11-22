@@ -14,6 +14,7 @@
         <ul>
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
+          <li><router-link to="/feiras">Feiras</router-link></li>
           <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
           <li @click="scrollToSobre"><router-link>Contato</router-link></li>
         </ul>

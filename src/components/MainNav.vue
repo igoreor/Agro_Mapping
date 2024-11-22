@@ -41,10 +41,7 @@ export default {
     },
     performSearch() {
       const defaultQuery = 'produtos'; // Valor padrão para pesquisa.
-      this.$router.push({
-        name: 'search-results',
-        query: { q: defaultQuery },
-      });
+      this.$router.push('/search');
       console.log('Pesquisa iniciada com termo padrão:', defaultQuery);
     },
     logout() {
@@ -72,6 +69,7 @@ export default {
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 9999;
+  border-radius: 9999px;
 }
 
 /* Conteúdo da Navbar */

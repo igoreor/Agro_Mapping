@@ -1,5 +1,5 @@
 import CadastroContato from "@/components/CadastroContato.vue";
-import SearchResults from "@/components/SearchResults.vue";
+import Pesquisa from "@/pages/Pesquisa.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import home from "../pages/home.vue";
 import Login from "../pages/login.vue";
@@ -27,9 +27,8 @@ const router = createRouter({
     },
     {
       path: "/search",
-      name: "search-results",
-      query: "q",
-      component: SearchResults,
+      name: "Pesquisa",
+      component: Pesquisa,
     },
     {
       path:"/cadastrocontato",

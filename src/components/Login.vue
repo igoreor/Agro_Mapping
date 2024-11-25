@@ -29,7 +29,14 @@ export default {
       };
   },
   methods: {
+      // Função para realizar login
       async fazerLogin() {
+          // Verifica se os campos estão preenchidos
+          if (!this.email || !this.senha) {
+              this.erro = 'Por favor, preencha todos os campos.';
+              return;
+          }
+
           try {
               const resposta = await axios.post('http://localhost:8090/api/login', {
                   email: this.email,
@@ -43,10 +50,13 @@ export default {
               const role = this.extractRoleFromToken(token);
               localStorage.setItem('role', role); // Armazena a role no localStorage
 
-              // Exibe a role como alert para verificação (pode remover depois)
-              alert('Role do usuário: ' + role);
 
-              this.$router.push('/'); // Redireciona para a página Home
+              // Redireciona para páginas diferentes com base na role
+              if (role === 'ADMIN') {
+                  this.$router.push('/admin-dashboard'); // Exemplo de rota para administradores
+              } else {
+                  this.$router.push('/'); // Redireciona para a página Home
+              }
           } catch (erro) {
               this.erro = 'Email ou senha incorretos.'; // Exibe uma mensagem de erro
           }
@@ -54,23 +64,26 @@ export default {
 
       // Função para extrair a role do token JWT
       extractRoleFromToken(token) {
-          const base64Url = token.split('.')[1]; // Pega a parte do meio do token
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Converte para formato base64
-          const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          }).join(''));
+          try {
+              const base64Url = token.split('.')[1]; // Pega a parte do meio do token
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Converte para formato base64
+              const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                      .split('')
+                      .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                      .join('')
+              );
 
-          const decoded = JSON.parse(jsonPayload); // Decodifica o payload para objeto JSON
-          return decoded.role; // Retorna a role do payload
+              const decoded = JSON.parse(jsonPayload); // Decodifica o payload para objeto JSON
+              return decoded.UserRole; // Ajustado para o nome do claim no backend
+          } catch (e) {
+              console.error('Erro ao extrair role do token:', e);
+              return null;
+          }
       },
   },
 };
 </script>
-
-<style scoped>
-/* Seu estilo aqui... */
-</style>
-
 
 <style scoped>
 .login-container {
@@ -156,4 +169,4 @@ a {
 a:hover {
   text-decoration: underline;
 }
-</style> 
+</style>

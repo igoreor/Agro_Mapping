@@ -48,57 +48,70 @@ export default {
 
     // Se houver token, extraímos o ID do usuário e consultamos a API para pegar a role
     const decodedToken = this.decodeJWT(token);
-    this.usuarioId = decodedToken.idUsuario; // ID do usuário extraído do token
+    if (decodedToken && decodedToken.idUsuario) {
+      this.usuarioId = decodedToken.idUsuario; // ID do usuário extraído do token
+    } else {
+      this.erro = 'Token inválido ou malformado.';
+      this.$router.push('/login');
+      return;
+    }
 
     // Agora, fazemos uma requisição para o back-end para obter a role do usuário
     this.getUsuarioRole();
   },
   methods: {
+    // Função para decodificar o JWT
     decodeJWT(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join('')
-      );
-
-      return JSON.parse(jsonPayload); // Retorna o payload decodificado
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        return JSON.parse(jsonPayload); // Retorna o payload decodificado
+      } catch (error) {
+        console.error('Erro ao decodificar o JWT:', error);
+        return null; // Retorna null se houver erro
+      }
     },
 
     // Método para consultar o back-end e pegar a role do usuário
     async getUsuarioRole() {
-  try {
-    const resposta = await axios.get(
-      `http://localhost:8090/usuario/${this.usuarioId}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
+      try {
+        const resposta = await axios.get(
+          `http://localhost:8090/usuario/${this.usuarioId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
+            },
+          }
+        );
+
+        // Exibe a resposta completa da API para depuração
+        console.log('Resposta completa da API:', resposta.data);
+
+        // Atribuindo a role do usuário à variável usuarioRole
+        this.usuarioRole = resposta.data.userRole; // Aqui você usa "userRole" para capturar a role do usuário
+
+        
+        console.log('Role do usuário recebida do backend:', this.usuarioRole);
+
+        // Dependendo da role, redireciona para a página apropriada
+        if (this.usuarioRole === 'SELLER') {
+        
+          this.$router.push('/cadastroProduto'); // Redireciona para a página de cadastro de produtos
         }
+      } catch (erro) {
+        console.error('Erro ao obter a role do usuário:', erro);
+        this.erro = 'Erro ao verificar a role do usuário.';
+        this.$router.push('/login');
       }
-    );
+    },
 
-    console.log(resposta.data); // Verifique o que está sendo retornado pela API
-    this.usuarioRole = resposta.data.role;
-    console.log('Role do usuário recebida do back-end:', this.usuarioRole);
-
-    // Dependendo da role, redireciona para a página apropriada
-    if (this.usuarioRole === 'SELLER') {
-      this.$router.push('/cadastroProduto'); // Redireciona para a página de cadastro de produtos
-    } else {
-      this.$router.push('/cadastroContato'); // Se não for 'SELLER', redireciona para o cadastro de contato
-    }
-  } catch (erro) {
-    console.error('Erro ao obter a role do usuário:', erro);
-    this.erro = 'Erro ao verificar a role do usuário.';
-    this.$router.push('/login');
-  }
-},
-
-
+    // Método para cadastrar contato
     async cadastrarContato() {
       this.erro = '';
       this.isSubmitting = true;
@@ -112,8 +125,16 @@ export default {
           `http://localhost:8090/contato?usuarioId=${this.usuarioId}`,
           {
             telefone: this.telefone,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
+            },
           }
         );
+
+        // Exibe um alert após o contato ser cadastrado
+     
 
         // Após o cadastro do contato, redireciona para a página inicial
         this.$router.push('/');
@@ -132,6 +153,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Estilos para o componente */

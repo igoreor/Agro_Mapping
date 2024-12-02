@@ -5,7 +5,7 @@ import home from "../pages/home.vue";
 import Login from "../pages/login.vue";
 import Registro from "../pages/registro.vue";
 import Feiras from "@/pages/Feiras.vue";
-
+import CadastroProdutos from "@/components/CadastroProdutos.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,6 +35,11 @@ const router = createRouter({
       path:"/cadastrocontato",
       name: "CadastroContato",
       component: CadastroContato,
+    },
+    {
+      path:"/cadastroProdutos",
+      name: "cadastroProdutos",
+      component: CadastroProdutos,
     },
     {
       path: "/feiras",

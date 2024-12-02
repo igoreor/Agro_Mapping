@@ -1,6 +1,5 @@
 <template>
-  <div class="header-bottom-side-right">
-    <img src="@/layouts/background.jpg" alt="Header Image" />
+  <div class="imagem">
   </div>
   <div class="registro-container">
     <h2>Cadastrar</h2>
@@ -95,18 +94,18 @@ export default {
   font-family: 'Roboto', sans-serif;
 }
 
-body {
-  background-image: url('src/layouts/background.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+.imagem {
+  background-image: url('@/layouts/background.jpg'); 
+  background-size: cover;  
+  background-position: center;  
+  background-repeat: no-repeat; 
+  height: 100vh; 
+  width: 100%;    
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  z-index: -1; 
 }
-
 .registro-container {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 30px;

@@ -157,7 +157,10 @@ export default {
         );
 
         console.log("Produto cadastrado:", resposta.data);
-        this.$router.push(""); // Redireciona para a página desejada
+        const produtoId = resposta.data.id;
+
+        // Redirecione para a página de cadastro de estoque com o ID do produto
+        this.$router.push(`/estoque?produtoId=${produtoId}`); // Redireciona para a página desejada
       } catch (erro) {
         console.error("Erro ao cadastrar produto:", erro);
 
@@ -176,7 +179,7 @@ export default {
 
 <style scoped>
 .cadastro-produto-container {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.86);
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

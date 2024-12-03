@@ -5,7 +5,9 @@ import home from "../pages/home.vue";
 import Login from "../pages/login.vue";
 import Registro from "../pages/registro.vue";
 import Feiras from "@/pages/Feiras.vue";
-import CadastroProdutos from "@/components/CadastroProdutos.vue";
+import CadastroProdutos from "@/pages/CadastroProdutos.vue";
+import CadastroEstoque from "@/pages/CadastroEstoque.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -45,6 +47,11 @@ const router = createRouter({
       path: "/feiras",
       name: "Feiras",
       component: Feiras,
+    },
+    {
+      path: "/estoque",
+      name: "Estoque",
+      component: CadastroEstoque,
     }
   ],
 });

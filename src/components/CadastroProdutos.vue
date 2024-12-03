@@ -106,7 +106,8 @@ export default {
         preco: "",
         descricao: "",
         imagem: null,
-        imagemPreview: null, // Preview da imagem
+        imagemPreview: null,
+        usuarioId: localStorage.getItem("usuarioId") || "", // Pegue o ID do usuário do localStorage
       },
       erro: "",
       isSubmitting: false,
@@ -119,35 +120,44 @@ export default {
         const reader = new FileReader();
         reader.onload = () => {
           this.produto.imagemPreview = reader.result;
-          this.produto.imagem = "caminho/para/imagens/" + file.name;
+          this.produto.imagem = file.name; // Enviar o nome do arquivo
         };
         reader.readAsDataURL(file);
       }
     },
-
     async cadastrarProduto() {
       this.erro = "";
       this.isSubmitting = true;
 
-      const formData = new FormData();
-      formData.append("nome", this.produto.nome);
-      formData.append("categoria", this.produto.categoria);
-      formData.append("preco", this.produto.preco);
-      formData.append("descricao", this.produto.descricao);
-      if (this.produto.imagem) {
-        formData.append("imagem", this.produto.imagem);
-      }
-
       try {
-        const resposta = await axios.post("http://localhost:8090/produto", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const usuarioId = localStorage.getItem("usuarioId"); // Pegue o usuarioId do localStorage
+
+        if (!usuarioId) {
+          throw new Error("Usuário não autenticado. Faça login novamente.");
+        }
+
+        const produtoDTO = {
+          nome: this.produto.nome,
+          categoria: this.produto.categoria,
+          descricao: this.produto.descricao,
+          preco: parseFloat(this.produto.preco),
+          imagem: this.produto.imagem, // Apenas o nome ou caminho da imagem
+          usuarioId, // Passe o UUID do usuário
+        };
+
+        const resposta = await axios.post(
+          `http://localhost:8090/produto?usuarioId=${usuarioId}`,
+          produtoDTO,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         console.log("Produto cadastrado:", resposta.data);
-        this.$router.push(""); // Redireciona para a página de produtos
+        this.$router.push(""); // Redireciona para a página desejada
       } catch (erro) {
         console.error("Erro ao cadastrar produto:", erro);
 

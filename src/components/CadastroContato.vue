@@ -102,7 +102,7 @@ export default {
         // Dependendo da role, redireciona para a página apropriada
         if (this.usuarioRole === 'SELLER') {
         
-          this.$router.push('/cadastroProduto'); // Redireciona para a página de cadastro de produtos
+          this.$router.push('/cadastroProdutos'); // Redireciona para a página de cadastro de produtos
         }
       } catch (erro) {
         console.error('Erro ao obter a role do usuário:', erro);

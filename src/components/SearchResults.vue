@@ -21,37 +21,58 @@
             <ul>
               <li><router-link to="/">Home</router-link></li>
               <li><router-link to="/feiras">Feiras</router-link></li>
+              <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li> <!-- Novo item de navegação -->
             </ul>
           </nav>
           <div class="nav-icons-container">
-            <div class="image-container">
-              <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="logout" />
-            </div>
-            <img src="@/layouts/menu.png" class="menu-button" />
+            <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="goToProfile" />
+            <span class="hover-text">Sair</span>
+
           </div>
         </div>
       </div>
   
       <main>
-        <div id="search-results" class="search-results">
-          <div v-if="loading">Buscando, por favor, aguarde...</div>
-          <div v-else-if="erro">{{ erro }}</div>
-          <div v-else-if="resultados.length === 0">
-            <p>Nenhum resultado encontrado.</p>
-          </div>
-          <div v-else>
-            <div
-              class="product-item"
-              v-for="produto in resultados"
-              :key="produto.id"
-            >
-              <h3>{{ produto.nome }}</h3>
-              <p>{{ produto.descricao }}</p>
-              <p>Preço: {{ produto.preco | currency }}</p>
-            </div>
+      <div id="search-results" class="search-results">
+        <div v-if="loading">Buscando, por favor, aguarde...</div>
+        <div v-else-if="erro">{{ erro }}</div>
+        <div v-else-if="resultados.length === 0">
+          <p>Nenhum resultado encontrado.</p>
+        </div>
+        <div v-else>
+          <div
+            class="product-item"
+            v-for="produto in resultados"
+            :key="produto.id"
+          >
+            <h3>{{ produto.nome }}</h3>
+            <p>{{ produto.descricao }}</p>
+            <p>Preço: {{ produto.preco | currency }}</p>
+            <p>Quantidade: {{ produto.estoque.quantidadeDisponivel | currency }}</p>
+            <button @click="abrirModal(produto)">Colocar no Carrinho</button>
           </div>
         </div>
-      </main>
+      </div>
+
+      <!-- Modal para inserir a quantidade -->
+      <div v-if="modalAberto" class="modal">
+        <div class="modal-content">
+          <h3>Adicionar ao Carrinho</h3>
+          <p>Produto: {{ produtoSelecionado.nome }}</p>
+          <label for="quantidade">Quantidade:</label>
+          <input
+            type="number"
+            v-model="quantidade"
+            min="1"
+            placeholder="Digite a quantidade"
+          />
+          <div class="modal-actions">
+            <button @click="adicionarAoCarrinho">Adicionar</button>
+            <button @click="fecharModal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </main>
     </div>
   </template>
   
@@ -65,6 +86,9 @@
         resultados: [],
         loading: false,
         erro: "",
+        modalAberto: false,
+        produtoSelecionado: null,
+        quantidade: 1,
       };
     },
     methods: {
@@ -78,24 +102,79 @@
         this.loading = true;
   
         try {
-              const { data } = await axios.get(
-                `http://localhost:8090/produto/buscarProdutoPorNome/nome/${encodeURIComponent(this.query)}`
-              );
-              console.log(data);  // Adicione este log para verificar os dados
-              this.resultados = data;
-              console.log("Busca feita.");
-              } catch (erro) {
-                this.erro = "Erro ao buscar produtos. Tente novamente mais tarde.";
-                console.log("Erro na busca", erro);  // Log do erro para depuração
-              } finally {
-                this.loading = false;
-              }
+          const { data } = await axios.get(
+            `http://localhost:8090/produto/buscarProdutoPorNome/nome/${encodeURIComponent(
+              this.query
+            )}`
+          );
+          this.resultados = data;
+        } catch (erro) {
+          this.erro = "Erro ao buscar produtos. Tente novamente mais tarde.";
+        } finally {
+          this.loading = false;
+        }
       },
       limparBusca() {
         this.query = "";
         this.resultados = [];
         this.erro = "";
       },
+      goToProfile() {
+        this.$router.push('/meuPerfil');
+      },
+      abrirModal(produto) {
+        this.produtoSelecionado = produto;
+        this.quantidade = 1;
+        this.modalAberto = true;
+      },
+      fecharModal() {
+        this.modalAberto = false;
+        this.produtoSelecionado = null;
+        this.quantidade = 1;
+      },
+      adicionarAoCarrinho() {
+        if (this.quantidade <= 0) {
+          alert("Quantidade inválida!");
+          return;
+        }
+
+        const token = localStorage.getItem("token"); 
+        const idUsuario = localStorage.getItem("usuarioId");
+        console.log(idUsuario)
+        if (!token) {
+          alert("Você não está autenticado!");
+          return;
+        }
+        const itemPedido = {
+          idProduto: this.produtoSelecionado.id,
+          quantidade: this.quantidade,
+          idUsuario: idUsuario,
+        };
+
+        // Configuração do cabeçalho com token
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        axios
+          .post("http://localhost:8090/itemPedido", itemPedido, config)
+          .then(() => {
+            alert("Produto adicionado ao carrinho com sucesso!");
+          })
+          .catch((erro) => {
+            console.error("Erro ao adicionar ao carrinho:", erro.response?.data || erro.message);
+            if (erro.response?.status === 403) {
+              alert("Acesso negado! Verifique sua autenticação.");
+            } else {
+              alert("Erro ao adicionar ao carrinho. Tente novamente.");
+            }
+          })
+          .finally(() => {
+            this.fecharModal();
+          });
+      }
     },
     filters: {
       currency(value) {
@@ -111,6 +190,32 @@
     padding: 0;
     margin: 0;
   }
+
+  /* Estilo para o modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
 
   body {
       font-family: 'arial';

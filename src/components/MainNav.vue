@@ -15,7 +15,8 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
           <li><router-link to="/feiras">Feiras</router-link></li>
-          <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li> <!-- Novo item de navegação -->
+          <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li>
+          <li><router-link to="/meusPedidos">Meus Pedidos</router-link></li> <!-- Novo item de navegação -->
           <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
           <li @click="scrollToSobre"><router-link>Contato</router-link></li>
         </ul>
@@ -23,7 +24,6 @@
       <div class="nav-icons-container">
         <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="goToProfile" />
         <span class="hover-text">Sair</span>
-        <img src="@/layouts/menu.png" class="menu-button" @click="toggleMenu" />
       </div>
     </div>
   </div>
@@ -38,9 +38,6 @@ export default {
     };
   },
   methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
     performSearch() {
       const defaultQuery = 'produtos'; 
       this.$router.push('/search');

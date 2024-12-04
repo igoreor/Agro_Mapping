@@ -15,12 +15,13 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produtos">Produtos</router-link></li>
           <li><router-link to="/feiras">Feiras</router-link></li>
+          <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li> <!-- Novo item de navegação -->
           <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
           <li @click="scrollToSobre"><router-link>Contato</router-link></li>
         </ul>
       </nav>
       <div class="nav-icons-container">
-        <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="logout" />
+        <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="goToProfile" />
         <span class="hover-text">Sair</span>
         <img src="@/layouts/menu.png" class="menu-button" @click="toggleMenu" />
       </div>
@@ -32,7 +33,7 @@
 export default {
   data() {
     return {
-      searchQuery: '', // Mantido para usar valores padrão, se necessário.
+      searchQuery: '', 
       isMenuOpen: false,
     };
   },
@@ -41,19 +42,21 @@ export default {
       this.isMenuOpen = !this.isMenuOpen;
     },
     performSearch() {
-      const defaultQuery = 'produtos'; // Valor padrão para pesquisa.
+      const defaultQuery = 'produtos'; 
       this.$router.push('/search');
       console.log('Pesquisa iniciada com termo padrão:', defaultQuery);
     },
     scrollToSobre() {
       document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' });
     },
+    goToProfile() {
+      this.$router.push('/meuPerfil');
+    }
   },
 };
 </script>
 
 <style scoped>
-/* Navbar Principal */
 .navbar {
   width: 100%;
   height: 90px;
@@ -68,7 +71,6 @@ export default {
   border-radius: 9999px;
 }
 
-/* Conteúdo da Navbar */
 .header-inner-content {
   display: flex;
   align-items: center;
@@ -77,8 +79,6 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
 }
-
-/* Logo */
 .logo-container {
   display: flex;
   align-items: center;
@@ -100,7 +100,6 @@ export default {
   width: auto;
 }
 
-/* Barra de Busca */
 .buscar-box {
   display: flex;
   align-items: center;
@@ -124,7 +123,6 @@ export default {
   background-color: #007e2b;
 }
 
-/* Navegação */
 nav ul {
   display: flex;
   align-items: center;
@@ -149,7 +147,6 @@ nav ul li a:hover {
   color: #00b33c;
 }
 
-/* Ícones à Direita */
 .nav-icons-container {
   display: flex;
   align-items: center;
@@ -171,7 +168,6 @@ nav ul li a:hover {
   display: none;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .header-inner-content {
     flex-direction: column;

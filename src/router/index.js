@@ -7,8 +7,8 @@ import Registro from "../pages/registro.vue";
 import Feiras from "@/pages/Feiras.vue";
 import CadastroProdutos from "@/pages/CadastroProdutos.vue";
 import CadastroEstoque from "@/pages/CadastroEstoque.vue";
-import MeuPerfil from "@/components/MeuPerfil.vue";
-import MeusAnuncios from "@/components/MeusAnuncios.vue";
+import MeuPerfil from "@/pages/MeuPerfil.vue";
+import MeusAnuncios from "@/pages/MeusAnuncios.vue";
 
 
 const router = createRouter({

@@ -49,6 +49,16 @@ export default {
               // Extrai a role diretamente do token
               const role = this.extractRoleFromToken(token);
               localStorage.setItem('role', role); // Armazena a role no localStorage
+              const decodedToken = this.decodeJWT(token);
+              if (decodedToken && decodedToken.idUsuario) {
+                this.usuarioId = decodedToken.idUsuario; // ID do usuário extraído do token
+              } else {
+                this.erro = 'Token inválido ou malformado.';
+                this.$router.push('/login');
+                return;
+              }
+              localStorage.setItem('usuarioId', decodedToken.idUsuario);
+              
 
 
               // Redireciona para páginas diferentes com base na role
@@ -81,6 +91,22 @@ export default {
               return null;
           }
       },
+      decodeJWT(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        return JSON.parse(jsonPayload); // Retorna o payload decodificado
+      } catch (error) {
+        console.error('Erro ao decodificar o JWT:', error);
+        return null; // Retorna null se houver erro
+      }
+    },
   },
 };
 </script>

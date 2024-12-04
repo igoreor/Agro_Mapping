@@ -66,7 +66,7 @@ export default {
         });
 
         // Armazena o ID do usuário no localStorage
-        localStorage.setItem('usuarioId', resposta.data.usuarioId);
+        
 
 
           this.$router.push('/login');

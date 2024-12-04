@@ -9,6 +9,7 @@ export default {
         logout() {
             // Limpa o token do localStorage
             localStorage.removeItem('token');
+            localStorage.removeItem('usuarioId')
             console.log('Token removido. Redirecionando para login...');
             // Redireciona para a página de login
             this.$router.push('/login');

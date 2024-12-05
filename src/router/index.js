@@ -10,6 +10,7 @@ import CadastroEstoque from "@/pages/CadastroEstoque.vue";
 import MeuPerfil from "@/pages/MeuPerfil.vue";
 import MeusAnuncios from "@/pages/MeusAnuncios.vue";
 import MeusPedidos from "@/pages/MeusPedidos.vue";
+import Carrinhos from "@/pages/Carrinhos.vue";
 
 
 const router = createRouter({
@@ -66,6 +67,11 @@ const router = createRouter({
       path: "/meusPedidos",
       name: "MeusPedidos",
       component: MeusPedidos,
+    },
+    {
+      path: "/carrinho",
+      name: "Carrinhos",
+      component: Carrinhos
     },
     {
       path: "/meusAnuncios",

@@ -1,6 +1,6 @@
 <template>
   <div class="produtos-container">
-    <h2>Perfil</h2>
+    <h2>Meus Anúncios</h2>
     <div v-if="usuario" class="produtos-details">
       <p><strong>Produtos:</strong></p>
       <ul>

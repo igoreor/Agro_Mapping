@@ -17,7 +17,7 @@
           <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li>
           <li><router-link to="/meusPedidos">Meus Pedidos</router-link></li> <!-- Novo item de navegação -->
           <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
-          <li @click="scrollToSobre"><router-link>Contato</router-link></li>
+          <li><router-link to="/carrinho">Carrinho</router-link></li>
         </ul>
       </nav>
       <div class="nav-icons-container">

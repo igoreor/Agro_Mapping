@@ -10,9 +10,6 @@
             <p><strong>Categoria:</strong> {{ item.produto.categoria }}</p>
             <p><strong>Preço:</strong> R$ {{ item.produto.preco.toFixed(2) }}</p>
             <p><strong>Quantidade:</strong> {{ item.quantidade }}</p>
-            <button @click="exluir" class="excluir">
-            excluir
-        </button>
           </li>
         </ul>
         <button @click="completarCompras" class="completar-compras-btn">

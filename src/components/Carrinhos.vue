@@ -1,6 +1,6 @@
 <template>
     <div class="produtos-container">
-      <h2>Perfil</h2>
+      <h2>Carrinho</h2>
       <div v-if="itensPedido.length" class="produtos-details">
         <p><strong>Itens do Pedido:</strong></p>
         <ul>
@@ -10,6 +10,9 @@
             <p><strong>Categoria:</strong> {{ item.produto.categoria }}</p>
             <p><strong>Preço:</strong> R$ {{ item.produto.preco.toFixed(2) }}</p>
             <p><strong>Quantidade:</strong> {{ item.quantidade }}</p>
+            <button @click="exluir" class="excluir">
+            excluir
+        </button>
           </li>
         </ul>
         <button @click="completarCompras" class="completar-compras-btn">

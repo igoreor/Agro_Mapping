@@ -31,9 +31,9 @@ export default {
       };
   },
   methods: {
-      // Função para realizar login
+    
       async fazerLogin() {
-          // Verifica se os campos estão preenchidos
+          
           if (!this.email || !this.senha) {
               this.erro = 'Por favor, preencha todos os campos.';
               return;
@@ -46,14 +46,14 @@ export default {
               });
 
               const token = resposta.data.token;
-              localStorage.setItem('token', token); // Armazena o token no localStorage
+              localStorage.setItem('token', token); 
 
-              // Extrai a role diretamente do token
+           
               const role = this.extractRoleFromToken(token);
-              localStorage.setItem('role', role); // Armazena a role no localStorage
+              localStorage.setItem('role', role); 
               const decodedToken = this.decodeJWT(token);
               if (decodedToken && decodedToken.idUsuario) {
-                this.usuarioId = decodedToken.idUsuario; // ID do usuário extraído do token
+                this.usuarioId = decodedToken.idUsuario; 
               } else {
                 this.erro = 'Token inválido ou malformado.';
                 this.$router.push('/login');
@@ -61,24 +61,21 @@ export default {
               }
               localStorage.setItem('usuarioId', decodedToken.idUsuario);
               
-
-
-              // Redireciona para páginas diferentes com base na role
               if (role === 'ADMIN') {
-                  this.$router.push('/admin-dashboard'); // Exemplo de rota para administradores
+                  this.$router.push('/admin-dashboard'); 
               } else {
-                  this.$router.push('/'); // Redireciona para a página Home
+                  this.$router.push('/'); 
               }
           } catch (erro) {
-              this.erro = 'Email ou senha incorretos.'; // Exibe uma mensagem de erro
+              this.erro = 'Email ou senha incorretos.'; 
           }
       },
 
-      // Função para extrair a role do token JWT
+     
       extractRoleFromToken(token) {
           try {
-              const base64Url = token.split('.')[1]; // Pega a parte do meio do token
-              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); // Converte para formato base64
+              const base64Url = token.split('.')[1]; 
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); 
               const jsonPayload = decodeURIComponent(
                   atob(base64)
                       .split('')
@@ -86,8 +83,8 @@ export default {
                       .join('')
               );
 
-              const decoded = JSON.parse(jsonPayload); // Decodifica o payload para objeto JSON
-              return decoded.UserRole; // Ajustado para o nome do claim no backend
+              const decoded = JSON.parse(jsonPayload); 
+              return decoded.UserRole; 
           } catch (e) {
               console.error('Erro ao extrair role do token:', e);
               return null;
@@ -103,10 +100,10 @@ export default {
             .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
             .join('')
         );
-        return JSON.parse(jsonPayload); // Retorna o payload decodificado
+        return JSON.parse(jsonPayload); 
       } catch (error) {
         console.error('Erro ao decodificar o JWT:', error);
-        return null; // Retorna null se houver erro
+        return null; 
       }
     },
   },
@@ -116,12 +113,12 @@ export default {
 <style scoped>
 .login-container {
   max-width: 400px;
-  margin: 50px auto; /* Espaçamento vertical */
+  margin: 50px auto; 
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f977; /* Fundo leve para destacar */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+  background-color: #f9f9f977; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
 .imagem {
   background-image: url('@/layouts/background.jpg'); 

@@ -5,8 +5,8 @@
         <div class="header-bottom-side-left">
           <h2>Faça Suas Compras Aqui!</h2>
           <p>Cuide da sua saúde comprando frutas e verduras frescas</p>
-          <button>
-            <router-link to="/search">Ver agora &#8594;</router-link>
+          <button @click="goToSearch">
+            Ver agora &#8594;
           </button>
         </div>
         <div class="header-bottom-side-right">
@@ -20,11 +20,15 @@
 <script>
 export default {
   name: 'MainHeader',
+  methods: {
+    goToSearch() {
+      this.$router.push('/search');
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* Estilos específicos para o Header */
 .header-inner-content {
   max-width: 2200px;
   margin: auto;

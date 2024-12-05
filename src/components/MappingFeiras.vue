@@ -10,7 +10,7 @@
   export default {
     data() {
       return {
-        feiras: [], // Armazena as feiras obtidas do backend
+        feiras: [], 
         mapa: null,
         marcadores: [],
         erro: "",
@@ -19,14 +19,14 @@
     methods: {
       async listarFeiras() {
         try {
-          // Substitua pela URL do seu backend
+          
           const apiUrl = "http://localhost:8090/feiras";
           const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error("Erro ao buscar feiras do backend.");
           }
   
-          this.feiras = await response.json(); // Obtem feiras
+          this.feiras = await response.json(); 
           this.buscarCoordenadasDasFeiras();
           console.log(this.feiras);
         } catch (error) {
@@ -36,9 +36,9 @@
       },
       async buscarCoordenadasDasFeiras() {
         try {
-          const apiKey = "AIzaSyDk4SEQzeihcc866JNybge7_InJvEjwDP8"; // Substitua pela sua chave de API
+          const apiKey = "AIzaSyDk4SEQzeihcc866JNybge7_InJvEjwDP8"; 
           for (const feira of this.feiras) {
-            const endereco = feira.localizacao; // Supondo que 'endereco' é uma propriedade em cada feira
+            const endereco = feira.localizacao; 
             const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
               endereco
             )}&key=${apiKey}`;
@@ -47,7 +47,7 @@
   
             if (data.status === "OK" && data.results.length > 0) {
               const location = data.results[0].geometry.location;
-              this.adicionarMarcador(location.lat, location.lng, feira.nome); // Supondo que cada feira tem um 'nome'
+              this.adicionarMarcador(location.lat, location.lng, feira.nome); 
             } else {
               console.warn(`Endereço não encontrado: ${endereco}`);
             }
@@ -61,7 +61,7 @@
         const mapaElemento = this.$refs.map;
   
         this.mapa = new google.maps.Map(mapaElemento, {
-          center: { lat: -8.89074, lng: -36.4966 }, // Ponto central do Brasil (Brasília)
+          center: { lat: -8.89074, lng: -36.4966 }, 
           zoom: 13,
         });
       },

@@ -32,11 +32,11 @@ export default {
       erro: '',
       isSubmitting: false,
       usuarioId: '',
-      usuarioRole: '', // Armazenar a role do usuário
+      usuarioRole: '', 
     };
   },
   created() {
-    // Verifica se há um token no localStorage
+    
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -46,21 +46,21 @@ export default {
       return;
     }
 
-    // Se houver token, extraímos o ID do usuário e consultamos a API para pegar a role
+    
     const decodedToken = this.decodeJWT(token);
     if (decodedToken && decodedToken.idUsuario) {
-      this.usuarioId = decodedToken.idUsuario; // ID do usuário extraído do token
+      this.usuarioId = decodedToken.idUsuario; 
     } else {
       this.erro = 'Token inválido ou malformado.';
       this.$router.push('/login');
       return;
     }
 
-    // Agora, fazemos uma requisição para o back-end para obter a role do usuário
+  
     this.getUsuarioRole();
   },
   methods: {
-    // Função para decodificar o JWT
+ 
     decodeJWT(token) {
       try {
         const base64Url = token.split('.')[1];
@@ -71,38 +71,31 @@ export default {
             .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
             .join('')
         );
-        return JSON.parse(jsonPayload); // Retorna o payload decodificado
+        return JSON.parse(jsonPayload); 
       } catch (error) {
         console.error('Erro ao decodificar o JWT:', error);
-        return null; // Retorna null se houver erro
+        return null; 
       }
     },
 
-    // Método para consultar o back-end e pegar a role do usuário
+
     async getUsuarioRole() {
       try {
         const resposta = await axios.get(
           `http://localhost:8090/usuario/${this.usuarioId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
+              Authorization: `Bearer ${localStorage.getItem('token')}`, 
             },
           }
         );
 
-        // Exibe a resposta completa da API para depuração
         console.log('Resposta completa da API:', resposta.data);
-
-        // Atribuindo a role do usuário à variável usuarioRole
-        this.usuarioRole = resposta.data.userRole; // Aqui você usa "userRole" para capturar a role do usuário
-
-        
+        this.usuarioRole = resposta.data.userRole;  
         console.log('Role do usuário recebida do backend:', this.usuarioRole);
-
-        // Dependendo da role, redireciona para a página apropriada
         if (this.usuarioRole === 'SELLER') {
         
-          this.$router.push('/cadastroProdutos'); // Redireciona para a página de cadastro de produtos
+          this.$router.push('/cadastroProdutos');
         }
       } catch (erro) {
         console.error('Erro ao obter a role do usuário:', erro);
@@ -111,7 +104,6 @@ export default {
       }
     },
 
-    // Método para cadastrar contato
     async cadastrarContato() {
       this.erro = '';
       this.isSubmitting = true;
@@ -128,15 +120,11 @@ export default {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
+              Authorization: `Bearer ${localStorage.getItem('token')}`, 
             },
           }
         );
 
-        // Exibe um alert após o contato ser cadastrado
-     
-
-        // Após o cadastro do contato, redireciona para a página inicial
         this.$router.push('/');
       } catch (erro) {
         console.error('Erro ao cadastrar contato:', erro);
@@ -156,7 +144,7 @@ export default {
 
 
 <style scoped>
-/* Estilos para o componente */
+
 * {
   margin: 0;
   padding: 0;

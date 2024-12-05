@@ -15,8 +15,8 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/feiras">Feiras</router-link></li>
           <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li>
-          <li><router-link to="/meusPedidos">Meus Pedidos</router-link></li> <!-- Novo item de navegação -->
-          <li @click="scrollToSobre"><router-link>Sobre</router-link></li>
+          <li><router-link to="/meusPedidos">Meus Pedidos</router-link></li>
+          <li @click="goToHomeAndScrollToSobre">Sobre</li>
           <li><router-link to="/carrinho">Carrinho</router-link></li>
         </ul>
       </nav>
@@ -42,8 +42,12 @@ export default {
       this.$router.push('/search');
       console.log('Pesquisa iniciada com termo padrão:', defaultQuery);
     },
-    scrollToSobre() {
-      document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' });
+    goToHomeAndScrollToSobre() {
+      this.$router.push('/').then(() => {
+        this.$nextTick(() => {
+          document.getElementById('sobre').scrollIntoView({ behavior: 'smooth' });
+        });
+      });
     },
     goToProfile() {
       this.$router.push('/meuPerfil');
@@ -51,6 +55,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .navbar {
@@ -138,10 +143,17 @@ nav ul li a {
   font-size: 16px;
   transition: color 0.3s;
 }
+nav ul li {
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  transition: color 0.3s;
+}
 
 nav ul li a:hover {
   color: #00b33c;
 }
+
 
 .nav-icons-container {
   display: flex;

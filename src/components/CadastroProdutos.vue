@@ -1,5 +1,12 @@
 <template>
   <div class="imagem"></div>
+  <div class="home">
+    <home
+      @click="voltarParaHome"
+    >
+      Voltar
+  </home>
+  </div>
 
   <div
     class="cadastro-produto-container bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-700 p-10 rounded-3xl shadow-xl max-w-md mx-auto mt-16 text-center"
@@ -66,7 +73,6 @@
             accept="image/*"
             class="absolute inset-0 opacity-0 cursor-pointer"
           />
-
           <img
             v-if="produto.imagemPreview"
             :src="produto.imagemPreview"
@@ -107,7 +113,7 @@ export default {
         descricao: "",
         imagem: null,
         imagemPreview: null,
-        usuarioId: localStorage.getItem("usuarioId") || "", // Pegue o ID do usuário do localStorage
+        usuarioId: localStorage.getItem("usuarioId") || "",
       },
       erro: "",
       isSubmitting: false,
@@ -120,7 +126,7 @@ export default {
         const reader = new FileReader();
         reader.onload = () => {
           this.produto.imagemPreview = reader.result;
-          this.produto.imagem = file.name; // Enviar o nome do arquivo
+          this.produto.imagem = file.name;
         };
         reader.readAsDataURL(file);
       }
@@ -130,7 +136,7 @@ export default {
       this.isSubmitting = true;
 
       try {
-        const usuarioId = localStorage.getItem("usuarioId"); // Pegue o usuarioId do localStorage
+        const usuarioId = localStorage.getItem("usuarioId");
 
         if (!usuarioId) {
           throw new Error("Usuário não autenticado. Faça login novamente.");
@@ -141,8 +147,8 @@ export default {
           categoria: this.produto.categoria,
           descricao: this.produto.descricao,
           preco: parseFloat(this.produto.preco),
-          imagem: this.produto.imagem, // Apenas o nome ou caminho da imagem
-          usuarioId, // Passe o UUID do usuário
+          imagem: this.produto.imagem,
+          usuarioId,
         };
 
         const resposta = await axios.post(
@@ -159,8 +165,7 @@ export default {
         console.log("Produto cadastrado:", resposta.data);
         const produtoId = resposta.data.id;
 
-        // Redirecione para a página de cadastro de estoque com o ID do produto
-        this.$router.push(`/estoque?produtoId=${produtoId}`); // Redireciona para a página desejada
+        this.$router.push(`/estoque?produtoId=${produtoId}`);
       } catch (erro) {
         console.error("Erro ao cadastrar produto:", erro);
 
@@ -173,6 +178,9 @@ export default {
         this.isSubmitting = false;
       }
     },
+    voltarParaHome() {
+      this.$router.push('/');
+    }
   },
 };
 </script>
@@ -250,15 +258,40 @@ button {
   margin: 200 auto;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .imagem {
   background-image: url("@/layouts/cadastro.jpeg");
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  min-height: 100vh; 
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -1;
 }
+
+.home {
+  position: absolute;
+  top: 30px;   /* Coloca o botão 30px abaixo do topo */
+  background-color: darkblue;
+  left: 30px;  /* Coloca o botão 30px à direita da borda esquerda */
+  color: white; /* Cor do texto em branco */
+  padding: 10px 20px; /* Espaciamento dentro do botão */
+  font-size: 16px; /* Tamanho da fonte */
+  border: none; /* Remove a borda */
+  border-radius: 8px; /* Cantos arredondados */
+  cursor: pointer; /* Adiciona o cursor de mãozinha ao passar o mouse */
+  transition: background-color 0.3s ease; /* Animação para mudança de cor */
+}
+
+.home:hover {
+  background-color: #42b983; /* Cor do botão quando o mouse passa por cima */
+}
+
 </style>

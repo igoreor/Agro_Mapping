@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="nuvem-fala">
-                <p>O Agrocommerce conecta compradores e vendedores de maneira simples e eficiente!</p>
+                <p>O Agro Mapping conecta compradores e vendedores de maneira simples e eficiente!</p>
             </div>
         </div>
     </section>
@@ -28,7 +28,7 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos específicos para a seção Sobre */
+
 #sobre {
     padding: 40px;
     background-color: #f9f9f9;

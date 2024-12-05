@@ -56,7 +56,6 @@ export default {
       try {
         this.isSubmitting = true;
 
-        // Enviar os dados do formulário para a API
         const resposta = await axios.post('http://localhost:8090/api/register', {
           nome: this.nome,
           email: this.email,
@@ -65,8 +64,6 @@ export default {
           userRole: this.userRole,
         });
 
-        // Armazena o ID do usuário no localStorage
-        
 
 
           this.$router.push('/login');
@@ -86,7 +83,7 @@ export default {
 </script>
 
 <style scoped>
-/* O mesmo estilo aplicado anteriormente */
+
 * {
   margin: 0;
   padding: 0;

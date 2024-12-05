@@ -6,7 +6,7 @@
           <h2>Faça Suas Compras Aqui!</h2>
           <p>Cuide da sua saúde comprando frutas e verduras frescas</p>
           <button>
-            <router-link to="/produtos">Ver agora &#8594;</router-link>
+            <router-link to="/search">Ver agora &#8594;</router-link>
           </button>
         </div>
         <div class="header-bottom-side-right">

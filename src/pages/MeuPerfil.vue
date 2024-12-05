@@ -3,17 +3,20 @@
 
         <MainNav/>
         <MeuPerfil/>
+        <LogoutButton/>
         
     </div>
 </template>
 <script>
 import MeuPerfil from '@/components/MeuPerfil.vue';
 import MainNav from '@/components/MainNav.vue';
+import LogoutButton from '@/components/LogoutButton.vue';
 
 export default{
     components:{
         MeuPerfil,
-        MainNav
+        MainNav,
+        LogoutButton
     }
 }
 </script>

@@ -10,7 +10,7 @@
           <p><strong>Categoria:</strong> {{ item.produto.categoria }}</p>
           <p><strong>Preço:</strong> R$ {{ item.produto.preco.toFixed(2) }}</p>
           <p><strong>Quantidade:</strong> {{ item.quantidade }}</p>
-          
+
           <!-- Botões para excluir ou diminuir quantidade -->
           <button @click="diminuirQuantidade(item)" :disabled="item.quantidade <= 1">Diminuir</button>
           <button @click="deletarItem(item.id)">Excluir</button>
@@ -20,12 +20,14 @@
         Completar Compras
       </button>
     </div>
-    
-    <!-- Exibição de mensagens de erro e sucesso -->
-    <p v-if="erro" class="erro">{{ erro }}</p>
-    <p v-if="sucesso" class="sucesso">{{ sucesso }}</p>
+    <p v-else-if="erro" class="erro">{{ erro }}</p>
     <p v-else class="erro">Nenhum item de pedido encontrado.</p>
   </div>
+
+  <!-- Exibição de mensagens de erro e sucesso -->
+  <p v-if="erro" class="erro">{{ erro }}</p>
+  <p v-if="sucesso" class="sucesso">{{ sucesso }}</p>
+  <p v-else class="erro">Nenhum item de pedido encontrado.</p>
 </template>
 
 <script>

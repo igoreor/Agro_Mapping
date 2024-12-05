@@ -474,9 +474,8 @@ nav ul li a:hover {
     padding: 20px;
     margin: 10px 0;
     width: auto; /* Ajuste automático ao conteúdo */
-    max-width: 80%; /* Limite opcional para a largura máxima */
+    max-width: 100%; /* Limite opcional para a largura máxima */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    word-wrap: break-word; /* Quebra de texto longa */
 }
 
 .product-item h3 {

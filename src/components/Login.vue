@@ -1,4 +1,6 @@
 <template>
+  <div class="imagem">
+  </div>
   <div class="login-container">
       <h2>Login</h2>
       <form @submit.prevent="fazerLogin">
@@ -118,10 +120,21 @@ export default {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9; /* Fundo leve para destacar */
+  background-color: #f9f9f977; /* Fundo leve para destacar */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
 }
-
+.imagem {
+  background-image: url('@/layouts/background.jpg'); 
+  background-size: cover;  
+  background-position: center;  
+  background-repeat: no-repeat; 
+  height: 100vh; 
+  width: 100%;    
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  z-index: -1; 
+}
 h2 {
   text-align: center;
   color: #333;

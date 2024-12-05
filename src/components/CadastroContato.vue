@@ -165,7 +165,7 @@ export default {
 }
 
 .cadastro-contato-container {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #f9f9f977;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

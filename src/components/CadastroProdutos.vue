@@ -179,7 +179,7 @@ export default {
 
 <style scoped>
 .cadastro-produto-container {
-  background-color: rgba(255, 255, 255, 0.86);
+  background-color: #f9f9f9d7;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

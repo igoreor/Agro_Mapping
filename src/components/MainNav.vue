@@ -92,7 +92,7 @@ export default {
 }
 
 .logo-image {
-  height: 100px;
+  height: 68px;
   width: auto;
 }
 

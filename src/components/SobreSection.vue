@@ -1,7 +1,7 @@
 <template>
     <section id="sobre">
         <div class="sobre-content">
-            <h2>Sobre o Agrocommerce</h2>
+            <h2>Sobre o AgroMapping</h2>
             <div class="sobre-columns">
                 <div class="sobre-column">
                     <p>A aplicação é uma plataforma de comércio eletrônico que conecta compradores e vendedores,

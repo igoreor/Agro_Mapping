@@ -146,7 +146,7 @@ export default {
         };
 
         const resposta = await axios.post(
-          `http://localhost:8090/produto?usuarioId=${usuarioId}`,
+          `https://agro-mapping.onrender.com/produto?usuarioId=${usuarioId}`,
           produtoDTO,
           {
             headers: {

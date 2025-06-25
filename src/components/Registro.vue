@@ -57,7 +57,7 @@ export default {
         this.isSubmitting = true;
 
         // Enviar os dados do formulário para a API
-        const resposta = await axios.post('http://localhost:8090/api/register', {
+        const resposta = await axios.post('https://agro-mapping.onrender.com/api/register', {
           nome: this.nome,
           email: this.email,
           senha: this.senha,

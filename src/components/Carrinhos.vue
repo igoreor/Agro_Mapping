@@ -39,7 +39,7 @@
         const token = localStorage.getItem('token');
         const usuarioId = localStorage.getItem('usuarioId');
         try {
-          const resposta = await axios.get(`http://localhost:8090/itemPedido/usuario/${usuarioId}`, {
+          const resposta = await axios.get(`https://agro-mapping.onrender.com/itemPedido/usuario/${usuarioId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -71,7 +71,7 @@
         };
 
         try {
-            const resposta = await axios.post('http://localhost:8090/pedido', pedidoRequestDTO, {
+            const resposta = await axios.post('https://agro-mapping.onrender.com/pedido', pedidoRequestDTO, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

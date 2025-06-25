@@ -40,7 +40,7 @@ export default {
           }
 
           try {
-              const resposta = await axios.post('http://localhost:8090/api/login', {
+              const resposta = await axios.post('https://agro-mapping.onrender.com/api/login', {
                   email: this.email,
                   senha: this.senha,
               });

@@ -63,7 +63,7 @@
   
         try {
           const resposta = await axios.post(
-            `http://localhost:8090/estoque?produtoId=${this.produtoId}`,
+            `https://agro-mapping.onrender.com/estoque?produtoId=${this.produtoId}`,
             { quantidadeDisponivel: this.estoque.quantidadeDisponivel },
             {
               headers: {

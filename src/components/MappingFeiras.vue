@@ -20,7 +20,7 @@
       async listarFeiras() {
         try {
           // Substitua pela URL do seu backend
-          const apiUrl = "http://localhost:8090/feiras";
+          const apiUrl = "https://agro-mapping.onrender.com/feiras";
           const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error("Erro ao buscar feiras do backend.");

@@ -35,7 +35,7 @@ export default {
       const token = localStorage.getItem('token');
       const usuarioId = localStorage.getItem('usuarioId');
       try {
-        const resposta = await axios.get(`http://localhost:8090/usuario/${usuarioId}`, {
+        const resposta = await axios.get(`https://agro-mapping.onrender.com/usuario/${usuarioId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

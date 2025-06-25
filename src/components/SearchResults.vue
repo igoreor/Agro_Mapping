@@ -103,7 +103,7 @@
   
         try {
           const { data } = await axios.get(
-            `http://localhost:8090/produto/buscarProdutoPorNome/nome/${encodeURIComponent(
+            `https://agro-mapping.onrender.com/produto/buscarProdutoPorNome/nome/${encodeURIComponent(
               this.query
             )}`
           );
@@ -159,7 +159,7 @@
         };
 
         axios
-          .post("http://localhost:8090/itemPedido", itemPedido, config)
+          .post("https://agro-mapping.onrender.com/itemPedido", itemPedido, config)
           .then(() => {
             alert("Produto adicionado ao carrinho com sucesso!");
           })

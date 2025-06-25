@@ -82,7 +82,7 @@ export default {
     async getUsuarioRole() {
       try {
         const resposta = await axios.get(
-          `http://localhost:8090/usuario/${this.usuarioId}`,
+          `https://agro-mapping.onrender.com/usuario/${this.usuarioId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token para autenticação
@@ -122,7 +122,7 @@ export default {
         }
 
         const resposta = await axios.post(
-          `http://localhost:8090/contato?usuarioId=${this.usuarioId}`,
+          `https://agro-mapping.onrender.com/contato?usuarioId=${this.usuarioId}`,
           {
             telefone: this.telefone,
           },

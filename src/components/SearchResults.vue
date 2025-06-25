@@ -108,7 +108,7 @@ const router = useRouter();
 const query = ref('');
 const internalResults = ref(props.results);
 const loading = ref(false);
-const searchError = ref(null); // Para tratar erros de busca no futuro
+const searchError = ref(null);
 
 // --- Sincroniza os resultados internos se a prop externa mudar ---
 watch(() => props.results, (newResults) => {
@@ -121,7 +121,7 @@ const buscarProduto = async () => {
 
   loading.value = true;
   searchError.value = null;
-  internalResults.value = []; // Limpa resultados anteriores
+  internalResults.value = [];
 
   try {
     const response = await axios.get(`https://agro-mapping.onrender.com/produto/buscarProdutoPorNome/nome/${encodeURIComponent(query.value)}`);
@@ -136,7 +136,7 @@ const buscarProduto = async () => {
 
 const limparBusca = () => {
   query.value = '';
-  internalResults.value = props.results; // Volta aos resultados originais
+  internalResults.value = props.results;
   searchError.value = null;
 };
 
@@ -164,7 +164,8 @@ const closeModal = () => {
   selectedProduct.value = null;
 };
 
-const adicionarAoCarrinho = async () => {
+// --- LÓGICA DE ADICIONAR AO CARRINHO REVERTIDA ---
+const adicionarAoCarrinho = () => {
   if (quantidade.value < 1) {
     erro.value = 'A quantidade deve ser de pelo menos 1.';
     return;
@@ -181,26 +182,35 @@ const adicionarAoCarrinho = async () => {
     return;
   }
 
-  const itemPedidoDTO = {
+  const itemPedido = {
     produtoId: selectedProduct.value.id,
     quantidade: quantidade.value,
     idUsuario: usuarioId,
   };
 
-  try {
-    await axios.post('https://agro-mapping.onrender.com/itemPedido/adicionar', itemPedidoDTO, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  axios
+    .post("https://agro-mapping.onrender.com/itemPedido", itemPedido, config)
+    .then(() => {
+      alert("Produto adicionado ao carrinho com sucesso!");
+    })
+    .catch((err) => {
+      console.error("Erro ao adicionar ao carrinho:", err.response?.data || err.message);
+      if (err.response?.status === 403) {
+        alert("Acesso negado! Verifique sua autenticação.");
+      } else {
+        alert("Erro ao adicionar ao carrinho. Tente novamente.");
+      }
+    })
+    .finally(() => {
+      isSubmitting.value = false;
+      closeModal(); // Fecha o modal sempre, como na sua lógica original
     });
-    alert('Produto adicionado ao carrinho com sucesso!');
-    closeModal();
-  } catch (err) {
-    console.error('Erro ao adicionar ao carrinho:', err);
-    erro.value = 'Não foi possível adicionar o produto. Tente novamente.';
-  } finally {
-    isSubmitting.value = false;
-  }
 };
 </script>
 

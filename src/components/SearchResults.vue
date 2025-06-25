@@ -6,10 +6,11 @@
           <img src="@/layouts/logo.png" alt="Logo" class="logo-image" />
           <h1 class="logo">AGRO <span>Mapping</span></h1>
         </div>
+        
         <form @submit.prevent="buscarProduto" class="buscar-box">
-          <div class="lupa-buscar">
+          <button type="submit" class="lupa-buscar" aria-label="Buscar">
             <i class="bi bi-search"></i>
-          </div>
+          </button>
           <div class="input-buscar">
             <input type="text" v-model="query" placeholder="Faça uma busca" />
           </div>
@@ -17,6 +18,7 @@
             <i class="bi bi-x-circle"></i>
           </div>
         </form>
+
         <nav>
           <ul>
             <li><router-link to="/">Home</router-link></li>
@@ -30,9 +32,12 @@
         </div>
       </div>
     </div>
+
     <div class="search-results-container">
-      <div v-if="results && results.length > 0" class="results-grid">
-        <div v-for="produto in results" :key="produto.id" class="product-card">
+      <div v-if="loading" class="loading-message">Buscando, por favor, aguarde...</div>
+      
+      <div v-else-if="internalResults && internalResults.length > 0" class="results-grid">
+        <div v-for="produto in internalResults" :key="produto.id" class="product-card">
           <img :src="produto.imagem || 'https://via.placeholder.com/300x200'" :alt="produto.nome" class="product-image">
           <div class="product-info">
             <p class="product-category">{{ produto.categoria }}</p>
@@ -86,10 +91,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-// Define as props que o componente espera receber
 const props = defineProps({
   results: {
     type: Array,
@@ -97,14 +102,56 @@ const props = defineProps({
   },
 });
 
-// Estado do modal e do formulário
+const router = useRouter();
+
+// --- Estado para a busca ---
+const query = ref('');
+const internalResults = ref(props.results);
+const loading = ref(false);
+const searchError = ref(null); // Para tratar erros de busca no futuro
+
+// --- Sincroniza os resultados internos se a prop externa mudar ---
+watch(() => props.results, (newResults) => {
+  internalResults.value = newResults;
+});
+
+// --- Funções de Busca ---
+const buscarProduto = async () => {
+  if (!query.value.trim()) return;
+
+  loading.value = true;
+  searchError.value = null;
+  internalResults.value = []; // Limpa resultados anteriores
+
+  try {
+    const response = await axios.get(`https://agro-mapping.onrender.com/produto/buscarProdutoPorNome/nome/${encodeURIComponent(query.value)}`);
+    internalResults.value = response.data;
+  } catch (err) {
+    console.error('Erro ao buscar produtos:', err);
+    searchError.value = 'Erro ao buscar produtos. Tente novamente.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const limparBusca = () => {
+  query.value = '';
+  internalResults.value = props.results; // Volta aos resultados originais
+  searchError.value = null;
+};
+
+const goToProfile = () => {
+  router.push('/meuPerfil');
+};
+
+
+// --- Estado e Funções do Modal ---
 const showModal = ref(false);
 const selectedProduct = ref(null);
 const quantidade = ref(1);
 const isSubmitting = ref(false);
 const erro = ref(null);
 
-// Funções do Modal
 const openModal = (produto) => {
   selectedProduct.value = produto;
   quantidade.value = 1;
@@ -117,7 +164,6 @@ const closeModal = () => {
   selectedProduct.value = null;
 };
 
-// Função para adicionar o item ao carrinho via API
 const adicionarAoCarrinho = async () => {
   if (quantidade.value < 1) {
     erro.value = 'A quantidade deve ser de pelo menos 1.';
@@ -159,17 +205,15 @@ const adicionarAoCarrinho = async () => {
 </script>
 
 <style scoped>
-/* Estilos do Header (Mesclados) */
+/* Estilos do Header */
 .navbar {
   margin-top: 20px;
   width: 90%;
   height: 90px;
-  margin-left: auto; /* Centraliza a navbar */
+  margin-left: auto;
   margin-right: auto;
   background-color: #2c2c2c;
   position: relative;
-  top: 0;
-  left: 0;
   display: flex;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -200,7 +244,7 @@ const adicionarAoCarrinho = async () => {
 
 .logo {
   color: green;
-  font-size: 1.8rem; /* Ajustado para melhor visualização */
+  font-size: 1.8rem;
 }
 
 .logo span {
@@ -218,7 +262,11 @@ const adicionarAoCarrinho = async () => {
   margin: 10px 0;
 }
 
-.buscar-box .lupa-buscar, .buscar-box .btn-fechar {
+.buscar-box .lupa-buscar {
+  /* Estilo para o botão de busca */
+  background-color: transparent;
+  border: none;
+  padding: 0;
   min-width: 40px;
   height: 40px;
   display: flex;
@@ -227,33 +275,34 @@ const adicionarAoCarrinho = async () => {
   cursor: pointer;
 }
 
-.buscar-box .btn-fechar i {
-  font-size: 20px;
-  margin-left: 5px;
-  color: green;
+.buscar-box .btn-fechar {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
+.buscar-box .btn-fechar i,
 .buscar-box .lupa-buscar i {
-  font-size: 25px;
+  font-size: 22px;
   color: green;
 }
 
 .buscar-box .input-buscar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: calc(100% - 80px);
   height: 100%;
 }
 
 .buscar-box .input-buscar input {
   width: 100%;
+  height: 100%;
   border: 0;
   border-radius: 5px;
   outline: 0;
   font-size: 16px;
   padding: 0 10px;
-  box-sizing: border-box;
 }
 
 nav ul {
@@ -263,10 +312,6 @@ nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-nav ul li {
-  cursor: pointer;
 }
 
 nav ul li a {
@@ -283,7 +328,7 @@ nav ul li a:hover {
 .nav-icons-container {
   display: flex;
   align-items: center;
-  position: relative; /* Para posicionamento do hover-text */
+  position: relative;
 }
 
 .clickable-image {
@@ -294,7 +339,7 @@ nav ul li a:hover {
 
 .hover-text {
   position: absolute;
-  top: 125%; /* Posição abaixo do ícone */
+  top: 125%;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
@@ -311,13 +356,19 @@ nav ul li a:hover {
   opacity: 1;
 }
 
-/* Estilos para o conteúdo (Originais) */
+/* Estilos para o conteúdo */
 .search-results-container {
   width: 100%;
-  padding: 2rem 1rem; /* Adicionado padding para espaçamento */
+  padding: 2rem 1rem;
 }
 
-/* Grade de Produtos */
+.loading-message {
+  text-align: center;
+  padding: 4rem 1rem;
+  font-size: 1.25rem;
+  color: #374151;
+}
+
 .results-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -378,7 +429,6 @@ nav ul li a:hover {
   margin-top: auto;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -450,7 +500,6 @@ nav ul li a:hover {
   gap: 1rem;
 }
 
-/* Botões Genéricos */
 .btn {
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
@@ -498,7 +547,6 @@ nav ul li a:hover {
   to { transform: rotate(360deg); }
 }
 
-/* Nenhum Resultado */
 .no-results {
   text-align: center;
   padding: 4rem 1rem;
@@ -517,7 +565,6 @@ nav ul li a:hover {
   color: #1f2937;
 }
 
-/* Media Queries para Responsividade */
 @media (min-width: 640px) {
   .results-grid {
     grid-template-columns: repeat(2, 1fr);

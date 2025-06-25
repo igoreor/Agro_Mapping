@@ -140,7 +140,7 @@ const fetchProfileData = async () => {
     // Faz as chamadas à API em paralelo para mais eficiência
     const [userResponse, ordersResponse] = await Promise.all([
       // TODO: Confirme se este é o endpoint correto para buscar o usuário
-      axios.get(`https://agro-mapping.onrender.com/usuarios/${usuarioId}`, config),
+      axios.get(`https://agro-mapping.onrender.com/usuario/${usuarioId}`, config),
       
       // TODO: Confirme se este é o endpoint correto para buscar os pedidos
       axios.get(`https://agro-mapping.onrender.com/pedidos/usuario/${usuarioId}`, config)
@@ -186,7 +186,7 @@ const saveProfile = async () => {
 
   try {
     // TODO: Confirme se este é o endpoint/método (PUT ou PATCH) correto para atualizar o usuário
-    const response = await axios.put(`https://agro-mapping.onrender.com/usuarios/${usuarioId}`, editableUser.value, config);
+    const response = await axios.put(`https://agro-mapping.onrender.com/usuario/${usuarioId}`, editableUser.value, config);
     
     user.value = response.data; // Atualiza o perfil com os dados retornados pela API
     

@@ -1,56 +1,87 @@
 <template>
-  <div class="search-results-container">
-
-    <div v-if="results && results.length > 0" class="results-grid">
-      <div v-for="produto in results" :key="produto.id" class="product-card">
-        <img :src="produto.imagem || 'https://via.placeholder.com/300x200'" :alt="produto.nome" class="product-image">
-        <div class="product-info">
-          <p class="product-category">{{ produto.categoria }}</p>
-          <h3 class="product-name">{{ produto.nome }}</h3>
-          <p class="product-price">R$ {{ produto.preco.toFixed(2) }}</p>
-          <button @click="openModal(produto)" class="btn btn-add-to-cart">
-            Adicionar ao Carrinho
-          </button>
+  <div>
+    <div class="navbar">
+      <div class="header-inner-content">
+        <div class="logo-container">
+          <img src="@/layouts/logo.png" alt="Logo" class="logo-image" />
+          <h1 class="logo">AGRO <span>Mapping</span></h1>
+        </div>
+        <form @submit.prevent="buscarProduto" class="buscar-box">
+          <div class="lupa-buscar">
+            <i class="bi bi-search"></i>
+          </div>
+          <div class="input-buscar">
+            <input type="text" v-model="query" placeholder="Faça uma busca" />
+          </div>
+          <div class="btn-fechar" @click="limparBusca">
+            <i class="bi bi-x-circle"></i>
+          </div>
+        </form>
+        <nav>
+          <ul>
+            <li><router-link to="/">Home</router-link></li>
+            <li><router-link to="/feiras">Feiras</router-link></li>
+            <li><router-link to="/meusAnuncios">Meus Anúncios</router-link></li>
+          </ul>
+        </nav>
+        <div class="nav-icons-container">
+          <img src="@/layouts/kindpng_746008.png" class="clickable-image" @click="goToProfile" />
+          <span class="hover-text">Sair</span>
         </div>
       </div>
     </div>
-
-    <div v-else class="no-results">
-      <svg xmlns="http://www.w3.org/2000/svg" class="no-results-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-      <h3>Nenhum produto encontrado</h3>
-      <p>Tente ajustar seus termos de busca na barra de pesquisa acima.</p>
-    </div>
-
-    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
-      <div class="modal-panel">
-        <h3 class="modal-title">Adicionar ao Carrinho</h3>
-        <div v-if="selectedProduct" class="modal-product-info">
-          <img :src="selectedProduct.imagem || 'https://via.placeholder.com/150'" :alt="selectedProduct.nome" class="modal-product-image">
-          <div>
-            <strong>{{ selectedProduct.nome }}</strong>
-            <p>R$ {{ selectedProduct.preco.toFixed(2) }}</p>
+    <div class="search-results-container">
+      <div v-if="results && results.length > 0" class="results-grid">
+        <div v-for="produto in results" :key="produto.id" class="product-card">
+          <img :src="produto.imagem || 'https://via.placeholder.com/300x200'" :alt="produto.nome" class="product-image">
+          <div class="product-info">
+            <p class="product-category">{{ produto.categoria }}</p>
+            <h3 class="product-name">{{ produto.nome }}</h3>
+            <p class="product-price">R$ {{ produto.preco.toFixed(2) }}</p>
+            <button @click="openModal(produto)" class="btn btn-add-to-cart">
+              Adicionar ao Carrinho
+            </button>
           </div>
         </div>
-        <div class="form-group">
-          <label for="quantidade">Quantidade:</label>
-          <input type="number" id="quantidade" v-model.number="quantidade" min="1" class="form-input">
-        </div>
-        <p v-if="erro" class="error-message">{{ erro }}</p>
-        <div class="modal-actions">
-          <button @click="closeModal" class="btn btn-secondary">Cancelar</button>
-          <button @click="adicionarAoCarrinho" :disabled="isSubmitting" class="btn btn-primary">
-            <svg v-if="isSubmitting" class="spinner-btn" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>{{ isSubmitting ? 'Adicionando...' : 'Confirmar' }}</span>
-          </button>
+      </div>
+
+      <div v-else class="no-results">
+        <svg xmlns="http://www.w3.org/2000/svg" class="no-results-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Tente ajustar seus termos de busca na barra de pesquisa acima.</p>
+      </div>
+
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-panel">
+          <h3 class="modal-title">Adicionar ao Carrinho</h3>
+          <div v-if="selectedProduct" class="modal-product-info">
+            <img :src="selectedProduct.imagem || 'https://via.placeholder.com/150'" :alt="selectedProduct.nome" class="modal-product-image">
+            <div>
+              <strong>{{ selectedProduct.nome }}</strong>
+              <p>R$ {{ selectedProduct.preco.toFixed(2) }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" v-model.number="quantidade" min="1" class="form-input">
+          </div>
+          <p v-if="erro" class="error-message">{{ erro }}</p>
+          <div class="modal-actions">
+            <button @click="closeModal" class="btn btn-secondary">Cancelar</button>
+            <button @click="adicionarAoCarrinho" :disabled="isSubmitting" class="btn btn-primary">
+              <svg v-if="isSubmitting" class="spinner-btn" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{{ isSubmitting ? 'Adicionando...' : 'Confirmar' }}</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </template>
 

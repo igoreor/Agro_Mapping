@@ -1,162 +1,344 @@
 <template>
-  <div class="pesquisa-page">
-    <div class="container">
-      <div class="search-container">
-        <h1 class="search-title">Encontre Produtos Frescos</h1>
-        <p class="search-subtitle">Busque por frutas, verduras, legumes e muito mais.</p>
-        <div class="search-bar">
-          <input
-            type="text"
-            v-model="termoBusca"
-            placeholder="O que você está procurando?"
-            @keyup.enter="buscarProdutos"
-            class="search-input"
-          />
-          <button @click="buscarProdutos" class="search-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <span>Buscar</span>
+  <div class="search-results-container">
+
+    <div v-if="results && results.length > 0" class="results-grid">
+      <div v-for="produto in results" :key="produto.id" class="product-card">
+        <img :src="produto.imagem || 'https://via.placeholder.com/300x200'" :alt="produto.nome" class="product-image">
+        <div class="product-info">
+          <p class="product-category">{{ produto.categoria }}</p>
+          <h3 class="product-name">{{ produto.nome }}</h3>
+          <p class="product-price">R$ {{ produto.preco.toFixed(2) }}</p>
+          <button @click="openModal(produto)" class="btn btn-add-to-cart">
+            Adicionar ao Carrinho
           </button>
         </div>
       </div>
-
-      <div v-if="loading" class="feedback-container">
-        <p>Buscando produtos...</p>
-      </div>
-
-      <div v-if="erro" class="feedback-container erro-box">
-        <p>{{ erro }}</p>
-      </div>
-      
-      <ModernoSearchResults :results="produtos" />
-
     </div>
+
+    <div v-else class="no-results">
+      <svg xmlns="http://www.w3.org/2000/svg" class="no-results-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <h3>Nenhum produto encontrado</h3>
+      <p>Tente ajustar seus termos de busca na barra de pesquisa acima.</p>
+    </div>
+
+    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-panel">
+        <h3 class="modal-title">Adicionar ao Carrinho</h3>
+        <div v-if="selectedProduct" class="modal-product-info">
+          <img :src="selectedProduct.imagem || 'https://via.placeholder.com/150'" :alt="selectedProduct.nome" class="modal-product-image">
+          <div>
+            <strong>{{ selectedProduct.nome }}</strong>
+            <p>R$ {{ selectedProduct.preco.toFixed(2) }}</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="quantidade">Quantidade:</label>
+          <input type="number" id="quantidade" v-model.number="quantidade" min="1" class="form-input">
+        </div>
+        <p v-if="erro" class="error-message">{{ erro }}</p>
+        <div class="modal-actions">
+          <button @click="closeModal" class="btn btn-secondary">Cancelar</button>
+          <button @click="adicionarAoCarrinho" :disabled="isSubmitting" class="btn btn-primary">
+            <svg v-if="isSubmitting" class="spinner-btn" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ isSubmitting ? 'Adicionando...' : 'Confirmar' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-// 3. IMPORTE O COMPONENTE DE RESULTADOS QUE CRIAMOS
-import ModernoSearchResults from '../components/ModernoSearchResults.vue'; 
 
-// Estado da página
-const termoBusca = ref('');
-const produtos = ref([]);
-const loading = ref(false);
+// Define as props que o componente espera receber (igual ao original)
+const props = defineProps({
+  results: {
+    type: Array,
+    required: true,
+  },
+});
+
+// Estado do modal e do formulário (lógica original)
+const showModal = ref(false);
+const selectedProduct = ref(null);
+const quantidade = ref(1);
+const isSubmitting = ref(false);
 const erro = ref(null);
 
-// Função para buscar produtos na API
-const buscarProdutos = async () => {
-  if (!termoBusca.value.trim()) {
-    erro.value = 'Por favor, digite algo para buscar.';
+// Funções do Modal (lógica original)
+const openModal = (produto) => {
+  selectedProduct.value = produto;
+  quantidade.value = 1;
+  erro.value = null;
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  selectedProduct.value = null;
+};
+
+// Função para adicionar o item ao carrinho via API (lógica original)
+const adicionarAoCarrinho = async () => {
+  if (quantidade.value < 1) {
+    erro.value = 'A quantidade deve ser de pelo menos 1.';
     return;
   }
-  
-  loading.value = true;
+
+  isSubmitting.value = true;
   erro.value = null;
-  produtos.value = []; // Limpa resultados anteriores
+  const usuarioId = localStorage.getItem('usuarioId');
+  const token = localStorage.getItem('token');
+
+  if (!usuarioId || !token) {
+    erro.value = 'Você precisa estar logado para adicionar itens ao carrinho.';
+    isSubmitting.value = false;
+    return;
+  }
+
+  const itemPedidoDTO = {
+    produtoId: selectedProduct.value.id,
+    quantidade: quantidade.value,
+    idUsuario: usuarioId,
+  };
 
   try {
-    const response = await axios.get(`https://agro-mapping.onrender.com/produto/buscar?nome=${termoBusca.value}`);
-    produtos.value = response.data;
-
-    if (response.data.length === 0) {
-      // A mensagem de "Nenhum produto encontrado" já é tratada pelo componente ModernoSearchResults
-    }
-
+    await axios.post('https://agro-mapping.onrender.com/itemPedido/adicionar', itemPedidoDTO, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    alert('Produto adicionado ao carrinho com sucesso!');
+    closeModal();
   } catch (err) {
-    console.error('Erro na busca:', err);
-    erro.value = 'Ocorreu um erro ao buscar os produtos. Tente novamente.';
+    console.error('Erro ao adicionar ao carrinho:', err);
+    erro.value = 'Não foi possível adicionar o produto. Tente novamente.';
   } finally {
-    loading.value = false;
+    isSubmitting.value = false;
   }
 };
 </script>
 
 <style scoped>
-.pesquisa-page {
-  background-color: #f9fafb;
-  min-height: 90vh;
-  padding-bottom: 3rem;
-  font-family: sans-serif;
+/* Estilos para o componente, sem precisar de Tailwind CSS */
+.search-results-container {
+  width: 100%;
 }
 
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* Grade de Produtos */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* 1 coluna por padrão (mobile) */
+  gap: 1.5rem;
 }
 
-/* Estilos da Barra de Busca */
-.search-container {
-  background-color: white;
-  padding: 2rem;
+.product-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2.5rem;
-  text-align: center;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.search-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1f2937;
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px -3px rgba(0, 0, 0, 0.1);
 }
 
-.search-subtitle {
-  font-size: 1rem;
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-category {
+  font-size: 0.75rem;
   color: #6b7280;
-  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+.product-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0.25rem 0;
+}
+
+.product-price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #059669;
+  margin-bottom: 1rem;
+}
+
+.btn-add-to-cart {
+  width: 100%;
+  margin-top: auto; /* Empurra o botão para o final do card */
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-panel {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
 }
 
-.search-bar {
+.modal-product-info {
   display: flex;
-  max-width: 600px;
-  margin: 0 auto;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal-product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.form-input {
+  width: 100%;
+  padding: 0.5rem;
   border: 1px solid #d1d5db;
-  border-radius: 2rem;
-  overflow: hidden;
+  border-radius: 0.375rem;
+  box-sizing: border-box; /* Garante que o padding não aumente a largura */
 }
 
-.search-input {
-  flex-grow: 1;
-  border: none;
-  padding: 0.75rem 1.25rem;
+.error-message {
+  color: #b91c1c;
+  margin-bottom: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Botões Genéricos */
+.btn {
+  padding: 0.6rem 1.2rem;
   font-size: 1rem;
-  outline: none;
-}
-
-.search-button {
+  border-radius: 0.375rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+}
+.btn-primary {
   background-color: #10b981;
   color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: background-color 0.2s;
 }
-
-.search-button:hover {
+.btn-primary:hover {
   background-color: #059669;
 }
+.btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
 
-/* Feedback */
-.feedback-container {
+.spinner-btn {
+  animation: spin 1s linear infinite;
+  height: 1.25rem;
+  width: 1.25rem;
+  margin-right: 0.75rem;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Nenhum Resultado */
+.no-results {
   text-align: center;
-  padding: 1rem;
+  padding: 4rem 1rem;
   color: #6b7280;
 }
-.erro-box {
-  color: #b91c1c;
-  background-color: #fee2e2;
-  border: 1px solid #fca5a5;
-  border-radius: 0.5rem;
+.no-results-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+}
+.no-results h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Media Queries para Responsividade da Grade */
+@media (min-width: 640px) {
+  .results-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .results-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .results-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>

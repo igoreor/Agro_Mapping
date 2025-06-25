@@ -193,7 +193,7 @@ const adicionarAoCarrinho = () => {
 
   // Requisição para o endpoint localhost, como no original
   axios
-    .post("http://localhost:8090/itemPedido", itemPedido, config)
+    .post("https://agro-mapping.onrender.com/itemPedido", itemPedido, config)
     .then(() => {
       alert("Produto adicionado ao carrinho com sucesso!");
     })

@@ -104,25 +104,20 @@ const props = defineProps({
 
 const router = useRouter();
 
-// --- Estado para a busca ---
 const query = ref('');
 const internalResults = ref(props.results);
 const loading = ref(false);
 const searchError = ref(null);
 
-// --- Sincroniza os resultados internos se a prop externa mudar ---
 watch(() => props.results, (newResults) => {
   internalResults.value = newResults;
 });
 
-// --- Funções de Busca ---
 const buscarProduto = async () => {
   if (!query.value.trim()) return;
-
   loading.value = true;
   searchError.value = null;
   internalResults.value = [];
-
   try {
     const response = await axios.get(`https://agro-mapping.onrender.com/produto/buscarProdutoPorNome/nome/${encodeURIComponent(query.value)}`);
     internalResults.value = response.data;
@@ -144,8 +139,6 @@ const goToProfile = () => {
   router.push('/meuPerfil');
 };
 
-
-// --- Estado e Funções do Modal ---
 const showModal = ref(false);
 const selectedProduct = ref(null);
 const quantidade = ref(1);
@@ -164,28 +157,32 @@ const closeModal = () => {
   selectedProduct.value = null;
 };
 
-// --- LÓGICA DE ADICIONAR AO CARRINHO REVERTIDA ---
+// --- FUNÇÃO COM A LÓGICA EXATA DO ARQUIVO ORIGINAL ---
 const adicionarAoCarrinho = () => {
-  if (quantidade.value < 1) {
-    erro.value = 'A quantidade deve ser de pelo menos 1.';
+  if (quantidade.value <= 0) {
+    alert("Quantidade inválida!");
     return;
   }
 
   isSubmitting.value = true;
   erro.value = null;
-  const usuarioId = localStorage.getItem('usuarioId');
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
+  const idUsuario = localStorage.getItem("usuarioId");
 
-  if (!usuarioId || !token) {
-    erro.value = 'Você precisa estar logado para adicionar itens ao carrinho.';
+  // Adicionando o console.log para depuração, como no original
+  console.log("ID do Usuário sendo enviado:", idUsuario);
+
+  if (!token) {
+    alert("Você não está autenticado!");
     isSubmitting.value = false;
     return;
   }
 
+  // Payload com a chave "idProduto", como no original
   const itemPedido = {
-    produtoId: selectedProduct.value.id,
+    idProduto: selectedProduct.value.id,
     quantidade: quantidade.value,
-    idUsuario: usuarioId,
+    idUsuario: idUsuario,
   };
 
   const config = {
@@ -194,8 +191,9 @@ const adicionarAoCarrinho = () => {
     },
   };
 
+  // Requisição para o endpoint localhost, como no original
   axios
-    .post("https://agro-mapping.onrender.com/itemPedido", itemPedido, config)
+    .post("http://localhost:8090/itemPedido", itemPedido, config)
     .then(() => {
       alert("Produto adicionado ao carrinho com sucesso!");
     })
@@ -209,7 +207,7 @@ const adicionarAoCarrinho = () => {
     })
     .finally(() => {
       isSubmitting.value = false;
-      closeModal(); // Fecha o modal sempre, como na sua lógica original
+      closeModal();
     });
 };
 </script>
@@ -273,7 +271,6 @@ const adicionarAoCarrinho = () => {
 }
 
 .buscar-box .lupa-buscar {
-  /* Estilo para o botão de busca */
   background-color: transparent;
   border: none;
   padding: 0;
